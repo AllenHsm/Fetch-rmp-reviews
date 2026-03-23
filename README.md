@@ -8,17 +8,17 @@ Built this as a feature for [GOLDTracker](https://github.com/AllenHsm/team04-GOL
 
 ```
 ┌─────────────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
-│  1. GraphQL Scraper  │────▶│  2. Selenium Scraper  │────▶│  3. GPT-4o Summary  │
-│                      │     │                       │     │                     │
-│  Hit RMP's GraphQL   │     │  Visit each prof's    │     │  Feed comments to   │
-│  API to pull every   │     │  page, extract all    │     │  GPT-4o-mini with   │
-│  UCSB professor's    │     │  student comments     │     │  temp=0 for concise │
-│  name, rating,       │     │  via headless Chrome  │     │  2-3 sentence       │
-│  difficulty, dept    │     │                       │     │  summaries          │
+│  1. GraphQL Scraper │────▶│  2. Selenium Scraper │────▶│  3. GPT-4o Summary  │
+│                     │     │                      │     │                     │
+│  Hit RMP's GraphQL  │     │  Visit each prof's   │     │  Feed comments to   │
+│  API to pull every  │     │  page, extract all   │     │  GPT-4o-mini with   │
+│  UCSB professor's   │     │  student comments    │     │  temp=0 for concise │
+│  name, rating,      │     │  via headless Chrome │     │  2-3 sentence       │
+│  difficulty, dept   │     │                      │     │  summaries          │
 └─────────────────────┘     └──────────────────────┘     └─────────────────────┘
-        ▼                            ▼                            ▼
-   rmp_prof.json            comments_by_prof.json     rmp_prof_with_summarized
-                                                        _comments.json
+           ▼                           ▼                            ▼
+    rmp_prof.json             comments_by_prof.json      rmp_prof_with_summarized
+                                                             _comments.json
 ```
 
 The final JSON gets loaded into the GOLDTracker app so students see AI-generated prof evaluations right next to course listings.
@@ -104,6 +104,14 @@ Each professor in the final JSON looks like:
   "comments_summarized_by_gpt": "Students praise Prof. Doe's clear explanations and fair exams. Some note heavy workload but say it's manageable with consistent effort. Office hours are highly recommended."
 }
 ```
+
+### Example screenshots
+
+After `scrape_comments.py`, comment text is stored in structured JSON (one excerpt below). The final file from `summarize_comments_by_gpt.py` adds `comments_summarized_by_gpt` alongside the same professor metadata.
+
+![Raw comment data from the Selenium scraper](examples/example_raw_data.png)
+
+![Final JSON with GPT-summarized comments](examples/example_cleaned_data_with_comments.png)
 
 ## Context
 
