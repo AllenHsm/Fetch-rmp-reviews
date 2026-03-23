@@ -61,13 +61,14 @@ No parallelism — staying under rate limits matters more than speed when you're
 ## Pipeline
 
 ```
-RMP_scraper.py          → Pulls all UCSB prof metadata via GraphQL
-scrape_comments.py      → Visits each prof's page, grabs comments
-summarize_comments_by_gpt.py → Summarizes comments, merges into final JSON
-Sort_profs.py           → Organizes output by department (Excel export)
+scrape_professor_metadata.py           → Pulls all UCSB prof metadata via GraphQL
+scrape_review_comments.py              → Visits each prof's page, grabs comments
+summarize_reviews_with_gpt.py          → Summarizes comments, merges into final JSON
+export_professors_by_department.py     → Organizes output by department (Excel export)
+find_duplicate_professors.py           → Same dept + same last name → Excel (optional QA)
 ```
 
-Each stage reads the previous stage's output and writes its own JSON file. You can re-run any stage independently without re-running the full pipeline.
+The main pipeline steps chain JSON from one script to the next; you can re-run any step without redoing the whole run. `find_duplicate_professors.py` is optional and only reads `rmp_prof_clean.json` for a duplicate check.
 
 ## Quick start
 
@@ -75,14 +76,14 @@ Each stage reads the previous stage's output and writes its own JSON file. You c
 pip install selenium openai openpyxl
 
 # 1. Scrape professor metadata
-python RMP_scraper.py
+python scrape_professor_metadata.py
 
 # 2. Scrape student comments (takes a while — headless Chrome visits each prof page)
-python scrape_comments.py
+python scrape_review_comments.py
 
 # 3. Generate AI summaries and merge
 export OPENAI_API_KEY=your_key_here
-python summarize_comments_by_gpt.py
+python summarize_reviews_with_gpt.py
 ```
 
 You'll need Chrome + ChromeDriver installed for the Selenium step.
@@ -107,7 +108,7 @@ Each professor in the final JSON looks like:
 
 ### Example screenshots
 
-After `scrape_comments.py`, comment text is stored in structured JSON (one excerpt below). The final file from `summarize_comments_by_gpt.py` adds `comments_summarized_by_gpt` alongside the same professor metadata.
+After `scrape_review_comments.py`, comment text is stored in structured JSON (one excerpt below). The final file from `summarize_reviews_with_gpt.py` adds `comments_summarized_by_gpt` alongside the same professor metadata.
 
 ![Raw comment data from the Selenium scraper](examples/example_raw_data.png)
 
